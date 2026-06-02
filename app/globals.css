@@ -135,9 +135,9 @@ a {
   position: sticky;
   top: 0;
   z-index: 40;
-  background: rgba(247, 241, 231, 0.82);
-  backdrop-filter: saturate(140%) blur(10px);
-  border-bottom: 1px solid rgba(92, 43, 43, 0.12);
+  background: var(--oxblood-deep);
+  border-bottom: 1px solid rgba(217, 184, 95, 0.3);
+  box-shadow: 0 6px 24px -16px rgba(7, 40, 33, 0.8);
 }
 
 .topbar__inner {
@@ -152,64 +152,126 @@ a {
   font-weight: 600;
   font-size: 1.18rem;
   letter-spacing: -0.01em;
-  color: var(--oxblood-deep);
+  color: var(--on-dark);
   text-decoration: none;
 }
 
 .wordmark span {
-  color: var(--brass);
+  color: var(--brass-light);
   font-style: italic;
 }
 
 .topbar__link {
   font-family: var(--font-sans);
-  font-size: 0.92rem;
+  font-size: 0.9rem;
   font-weight: 600;
   text-decoration: none;
-  color: var(--oxblood);
-  padding: 0.45rem 0.2rem;
-  border-bottom: 1.5px solid transparent;
-  transition: border-color 0.2s ease, color 0.2s ease;
+  color: var(--oxblood-deep);
+  background: var(--brass-light);
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  transition: background 0.2s ease, transform 0.12s ease;
 }
 
 .topbar__link:hover {
-  border-color: var(--brass);
-  color: var(--oxblood-deep);
+  background: #e7cd85;
+  transform: translateY(-1px);
 }
 
 /* ============================================================
    Hero
    ============================================================ */
 .hero {
-  padding-top: clamp(3rem, 7vw, 5.5rem);
+  position: relative;
+  padding-top: clamp(2.5rem, 6vw, 4.5rem);
   padding-bottom: var(--section-pad);
+  overflow: hidden;
+  background: radial-gradient(
+      60% 65% at 82% 28%,
+      rgba(21, 86, 74, 0.16),
+      transparent 70%
+    ),
+    radial-gradient(
+      48% 55% at 8% 92%,
+      rgba(168, 132, 47, 0.12),
+      transparent 70%
+    ),
+    linear-gradient(180deg, var(--ivory) 0%, var(--ivory-warm) 100%);
 }
 
+/* faint gold hairline that separates the hero from the dark band below */
+.hero::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(168, 132, 47, 0.4),
+    transparent
+  );
+}
+
+/* Flattened grid: text flows in the left column, the book is pinned to the
+   right column on desktop. On mobile the explicit placement is cleared so
+   children fall back to DOM order (book sits right under the title). */
 .hero__grid {
+  position: relative;
+  z-index: 1;
   display: grid;
-  grid-template-columns: 1.1fr 0.9fr;
-  gap: clamp(2.5rem, 6vw, 5rem);
-  align-items: center;
+  grid-template-columns: minmax(0, 1.06fr) minmax(0, 0.94fr);
+  column-gap: clamp(2rem, 5vw, 4.5rem);
+  align-items: start;
 }
 
 .hero__eyebrow {
+  grid-column: 1;
+  grid-row: 1;
+  position: relative;
   margin-bottom: 1.25rem;
+  padding-left: 2.4rem;
 }
 
-.hero h1 {
+/* small gold tick before the eyebrow */
+.hero__eyebrow::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 1.8rem;
+  height: 2px;
+  background: var(--brass);
+  transform: translateY(-50%);
+}
+
+.hero__title {
+  grid-column: 1;
+  grid-row: 2;
   font-size: clamp(2.4rem, 5.4vw, 4.05rem);
   margin-bottom: 1.4rem;
 }
 
 .hero__sub {
+  grid-column: 1;
+  grid-row: 3;
   font-size: clamp(1.08rem, 1.5vw, 1.25rem);
   color: var(--ink-soft);
   max-width: 34rem;
-  margin-bottom: 2.2rem;
+  margin-bottom: 2rem;
+}
+
+.hero__form {
+  grid-column: 1;
+  grid-row: 4;
 }
 
 .hero__reassure {
-  margin-top: 1rem;
+  grid-column: 1;
+  grid-row: 5;
+  margin-top: 1.4rem;
   font-size: 0.9rem;
   color: var(--ink-soft);
   display: flex;
@@ -226,11 +288,96 @@ a {
   flex: none;
 }
 
+/* Book pinned to the right column, vertically centered across the text rows. */
+.hero__book {
+  position: relative;
+  grid-column: 2;
+  grid-row: 1 / 6;
+  align-self: center;
+  justify-self: center;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding-block: 1rem;
+}
+
+/* soft emerald glow disc behind the book */
+.hero__book::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: min(118%, 30rem);
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(
+    circle,
+    rgba(21, 86, 74, 0.22) 0%,
+    rgba(21, 86, 74, 0.08) 42%,
+    transparent 68%
+  );
+  z-index: 0;
+}
+
+/* faint concentric gold ring */
+.hero__book::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: min(96%, 24rem);
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+  border: 1.5px solid rgba(168, 132, 47, 0.28);
+  border-radius: 50%;
+  z-index: 0;
+}
+
+/* 5-star reader proof under the form */
+.hero__proof {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin-top: 1.1rem;
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: var(--ink-soft);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.hero__proof:hover {
+  color: var(--oxblood);
+}
+
+.hero__proof .stars {
+  margin-bottom: 0;
+  font-size: 0.95rem;
+}
+
 /* ============================================================
    Email capture form
    ============================================================ */
 .capture {
-  max-width: 30rem;
+  max-width: 31rem;
+}
+
+/* The form itself is a refined card; the success state brings its own card. */
+form.capture {
+  background: var(--paper-card);
+  border: 1px solid rgba(21, 86, 74, 0.16);
+  border-top: 3px solid var(--brass);
+  border-radius: var(--radius);
+  padding: 1.4rem 1.4rem 1.25rem;
+  box-shadow: 0 26px 60px -34px rgba(7, 40, 33, 0.55);
+}
+
+.capture__title {
+  font-family: var(--font-serif);
+  font-weight: 600;
+  font-size: 1.12rem;
+  color: var(--ink);
+  margin-bottom: 0.9rem;
 }
 
 .capture__row {
@@ -250,21 +397,21 @@ a {
   font-family: var(--font-sans);
   font-size: 1rem;
   padding: 0.95rem 1.1rem;
-  border: 1.5px solid rgba(92, 43, 43, 0.28);
+  border: 1.5px solid rgba(21, 86, 74, 0.24);
   border-radius: 10px;
-  background: var(--paper-card);
+  background: #fffefb;
   color: var(--ink);
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .capture__input::placeholder {
-  color: #9c8c7c;
+  color: #8c8478;
 }
 
 .capture__input:focus {
   outline: none;
   border-color: var(--oxblood);
-  box-shadow: 0 0 0 3px rgba(92, 43, 43, 0.14);
+  box-shadow: 0 0 0 3px rgba(21, 86, 74, 0.15);
 }
 
 .capture__input[aria-invalid="true"] {
@@ -402,6 +549,8 @@ a {
    image reads as a physical book.
    ============================================================ */
 .book-stage {
+  position: relative;
+  z-index: 1;
   display: flex;
   justify-content: center;
   perspective: 1800px;
@@ -836,21 +985,53 @@ a {
    Responsive
    ============================================================ */
 @media (max-width: 980px) {
+  /* Single column; clear the desktop grid placement so children fall back to
+     DOM order: eyebrow -> title -> book -> subhead -> form -> byline. */
   .hero__grid {
     grid-template-columns: 1fr;
     text-align: center;
+    justify-items: center;
   }
 
-  .hero__order-copy {
-    order: 2;
+  .hero__eyebrow,
+  .hero__title,
+  .hero__sub,
+  .hero__form,
+  .hero__reassure,
+  .hero__book {
+    grid-column: 1;
+    grid-row: auto;
   }
 
-  .hero__order-book {
-    order: 1;
+  .hero__eyebrow {
+    padding-left: 0;
+  }
+
+  .hero__eyebrow::before {
+    display: none;
+  }
+
+  .hero__book {
+    padding-block: 0.5rem 1.75rem;
+  }
+
+  /* a touch smaller on tablet/mobile */
+  .hero__book .book {
+    width: clamp(186px, 42vw, 236px);
+  }
+
+  /* keep the glow/ring as a tight halo behind the smaller book */
+  .hero__book::before {
+    width: 21rem;
+  }
+
+  .hero__book::after {
+    width: 15.5rem;
   }
 
   .hero__sub,
   .capture,
+  .hero__form,
   .hero__reassure {
     margin-inline: auto;
   }

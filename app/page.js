@@ -83,31 +83,38 @@ export default function Page() {
         {/* 2. Hero */}
         <section className="section hero">
           <div className="container hero__grid">
-            <div className="hero__order-copy">
-              <p className="eyebrow hero__eyebrow reveal" style={{ "--delay": "0.05s" }}>
-                The Purpose Driven Wealth Plan™ · Free Ebook
-              </p>
-              <h1 className="reveal" style={{ "--delay": "0.15s" }}>
-                You don&rsquo;t have to choose between <em>killing the debt</em>{" "}
-                and building wealth.
-              </h1>
-              <p className="hero__sub reveal" style={{ "--delay": "0.28s" }}>
-                You&rsquo;ve done the responsible things and still feel behind.
-                This free ebook shows how to redirect money you already spend
-                into a policy you own — so the debt comes down and your wealth
-                goes up from the very same dollars.
-              </p>
-              <div className="reveal" style={{ "--delay": "0.4s" }}>
-                <EmailCapture id="hero" />
-              </div>
-              <p className="hero__reassure reveal" style={{ "--delay": "0.5s" }}>
-                By Denise Boisvert &amp; Steve Gibbs, Esq. AEP
-              </p>
-            </div>
+            <p className="eyebrow hero__eyebrow reveal" style={{ "--delay": "0.05s" }}>
+              The Purpose Driven Wealth Plan™ · Free Ebook
+            </p>
+            <h1 className="hero__title reveal" style={{ "--delay": "0.15s" }}>
+              You don&rsquo;t have to choose between <em>killing the debt</em>{" "}
+              and building wealth.
+            </h1>
 
-            <div className="hero__order-book reveal" style={{ "--delay": "0.2s" }}>
+            <div className="hero__book reveal" style={{ "--delay": "0.22s" }}>
               <BookCover />
             </div>
+
+            <p className="hero__sub reveal" style={{ "--delay": "0.3s" }}>
+              You&rsquo;ve done the responsible things and still feel behind.
+              This free ebook shows how to redirect money you already spend into
+              a policy you own — so the debt comes down and your wealth goes up
+              from the very same dollars.
+            </p>
+
+            <div className="hero__form reveal" style={{ "--delay": "0.4s" }}>
+              <EmailCapture id="hero" />
+              <a className="hero__proof" href="#reviews">
+                <span className="stars" aria-hidden="true">
+                  ★★★★★
+                </span>
+                <span>Loved by readers — see what they said</span>
+              </a>
+            </div>
+
+            <p className="hero__reassure reveal" style={{ "--delay": "0.5s" }}>
+              By Denise Boisvert &amp; Steve Gibbs, Esq. AEP
+            </p>
           </div>
         </section>
 
@@ -149,7 +156,7 @@ export default function Page() {
         </section>
 
         {/* 5. Testimonials */}
-        <section className="section">
+        <section className="section" id="reviews">
           <div className="container">
             <div className="testi__head">
               <p className="eyebrow">From readers</p>

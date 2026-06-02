@@ -131,6 +131,7 @@ export default function EmailCapture({ variant = "light", id = "capture" }) {
 
   return (
     <form className={wrapperClass} onSubmit={onSubmit} noValidate>
+      <p className="capture__title">Where should we send your free ebook?</p>
       <div className="capture__fields">
         <div className="capture__field">
           <label htmlFor={fieldId("name")} style={srOnly}>
