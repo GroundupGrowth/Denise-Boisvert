@@ -238,6 +238,12 @@ a {
   gap: 0.6rem;
 }
 
+.capture__fields {
+  display: grid;
+  gap: 0.6rem;
+  margin-bottom: 0.7rem;
+}
+
 .capture__input {
   flex: 1 1 auto;
   min-width: 0;

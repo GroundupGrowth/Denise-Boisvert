@@ -227,7 +227,7 @@ export default function Page() {
             <p className="eyebrow">Get the free ebook</p>
             <h2>You don&rsquo;t have to choose. You never did.</h2>
             <p>
-              Enter your email and the ebook is yours. Read it tonight, run it
+              Add your details and the ebook is yours. Read it tonight, run it
               against your own numbers, and decide for yourself.
             </p>
             <EmailCapture id="final" />

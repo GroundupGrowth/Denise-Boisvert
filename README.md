@@ -29,7 +29,7 @@ app/
   globals.css            All styles: tokens, 3D book, animations, responsive
   api/subscribe/route.js Dynamic API route — validates + logs email
 components/
-  EmailCapture.js        Client component: validate → POST → auto-download
+  EmailCapture.js        Lead form (name/email/phone): validate → POST → download
   BookCover.js           3D frame around /book-cover.jpg (+ SVG fallback)
 public/
   the-purpose-driven-wealth-plan.pdf   Placeholder PDF — REPLACE with the ebook
@@ -80,42 +80,55 @@ form's auto-download both point to it).
 
 ---
 
-## Email-provider integration point
+## Lead form & GoHighLevel webhook
 
-By default, a submitted email is **validated and logged** in the API route —
-no third-party calls, no keys required. When you're ready to connect a real
-provider (ConvertKit, Mailchimp, or Beehiiv), open:
+The form collects **name, email, and phone**. On submit the API route
+(`app/api/subscribe/route.js`) validates the input, logs the lead, and — if a
+webhook URL is configured — POSTs the lead as JSON to your **GoHighLevel
+inbound webhook**. The ebook download fires regardless, so a slow or
+mis-configured webhook never blocks the visitor.
 
+The JSON payload sent to GoHighLevel:
+
+```json
+{
+  "name": "Jane Smith",
+  "first_name": "Jane",
+  "last_name": "Smith",
+  "email": "jane@example.com",
+  "phone": "+1 555 123 4567",
+  "source": "hero",
+  "submittedAt": "2026-06-02T12:34:56.000Z"
+}
 ```
-app/api/subscribe/route.js
-```
 
-and look for the block marked:
+### Connect the webhook
 
-```
-// INTEGRATION POINT — connect your email provider here.
-```
+1. In GoHighLevel: **Automation → Workflows → New Workflow → add an "Inbound
+   Webhook" trigger**, and copy the webhook URL.
+2. Set it as an environment variable (the URL is **never** hardcoded in source).
 
-Copy-paste examples for all three providers are included there. **Never
-hardcode an API key.** Read it from an environment variable instead.
-
-Set the env var locally in a `.env.local` file (git-ignored):
+Locally, in a `.env.local` file (git-ignored):
 
 ```bash
 # .env.local
-CONVERTKIT_API_KEY=your_key_here
-CONVERTKIT_FORM_ID=your_form_id_here
+GOHIGHLEVEL_WEBHOOK_URL=https://services.leadconnectorhq.com/hooks/XXXX/webhook-trigger/YYYY
 ```
 
-…and on Vercel:
+On Vercel:
 
 ```bash
-vercel env add CONVERTKIT_API_KEY
-vercel env add CONVERTKIT_FORM_ID
+vercel env add GOHIGHLEVEL_WEBHOOK_URL
 ```
 
-(or add them under **Project → Settings → Environment Variables** in the Vercel
-dashboard). Redeploy after adding env vars.
+(or add it under **Project → Settings → Environment Variables** in the Vercel
+dashboard). Redeploy after adding it.
+
+3. In the workflow, map `name` / `first_name` / `last_name` / `email` /
+   `phone` / `source` to your GHL contact fields.
+
+Until `GOHIGHLEVEL_WEBHOOK_URL` is set, leads are validated and **logged only**
+(visible in `vercel logs` / your terminal), and the ebook still downloads.
 
 ---
 

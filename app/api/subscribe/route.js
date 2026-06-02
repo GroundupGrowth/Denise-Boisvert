@@ -5,6 +5,7 @@ import { NextResponse } from "next/server";
 export const dynamic = "force-dynamic";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const digitsOf = (s) => (s.match(/\d/g) || []).length;
 
 export async function POST(request) {
   let body;
@@ -14,70 +15,82 @@ export async function POST(request) {
     return NextResponse.json({ error: "Invalid request body." }, { status: 400 });
   }
 
+  const name = typeof body?.name === "string" ? body.name.trim() : "";
   const email = typeof body?.email === "string" ? body.email.trim() : "";
+  const phone = typeof body?.phone === "string" ? body.phone.trim() : "";
   const source = typeof body?.source === "string" ? body.source : "unknown";
 
+  if (name.length < 2) {
+    return NextResponse.json({ error: "Please enter your name." }, { status: 422 });
+  }
   if (!EMAIL_RE.test(email)) {
     return NextResponse.json(
       { error: "Please enter a valid email address." },
       { status: 422 }
     );
   }
+  if (digitsOf(phone) < 7) {
+    return NextResponse.json(
+      { error: "Please enter a valid phone number." },
+      { status: 422 }
+    );
+  }
+
+  // Split the full name into first/last so GoHighLevel can map them cleanly.
+  const [firstName, ...rest] = name.split(/\s+/);
+  const lastName = rest.join(" ");
+
+  const lead = {
+    name,
+    first_name: firstName,
+    last_name: lastName,
+    email,
+    phone,
+    source, // "hero" or "final" — which form converted
+    submittedAt: new Date().toISOString(),
+  };
 
   // Always have a record of the lead in your server logs.
-  console.log(`[subscribe] ${email} (source: ${source})`);
+  console.log(`[subscribe] ${name} <${email}> ${phone} (source: ${source})`);
 
   // ============================================================
-  // INTEGRATION POINT — connect your email provider here.
+  // INTEGRATION POINT — GoHighLevel inbound webhook.
   //
-  // Read the API key from a Vercel environment variable. NEVER
-  // hardcode a key in source. Set it in the Vercel dashboard
-  // (Project → Settings → Environment Variables) or via:
-  //   vercel env add EMAIL_PROVIDER_API_KEY
+  // Set the webhook URL as a Vercel environment variable. NEVER hardcode
+  // it in source. In GoHighLevel: Automation -> Workflows -> add an
+  // "Inbound Webhook" trigger, copy its URL, then:
+  //   vercel env add GOHIGHLEVEL_WEBHOOK_URL
+  // (or add it under Project -> Settings -> Environment Variables).
   //
-  // ConvertKit example:
-  // ------------------------------------------------------------
-  // const apiKey = process.env.CONVERTKIT_API_KEY;
-  // const formId = process.env.CONVERTKIT_FORM_ID;
-  // if (apiKey && formId) {
-  //   await fetch(`https://api.convertkit.com/v3/forms/${formId}/subscribe`, {
-  //     method: "POST",
-  //     headers: { "Content-Type": "application/json" },
-  //     body: JSON.stringify({ api_key: apiKey, email }),
-  //   });
-  // }
+  // Locally, put it in .env.local:
+  //   GOHIGHLEVEL_WEBHOOK_URL=https://services.leadconnectorhq.com/hooks/...
   //
-  // Mailchimp example:
-  // ------------------------------------------------------------
-  // const apiKey = process.env.MAILCHIMP_API_KEY;        // e.g. "abc-us21"
-  // const listId = process.env.MAILCHIMP_LIST_ID;
-  // const dc = apiKey?.split("-")[1];
-  // if (apiKey && listId && dc) {
-  //   await fetch(`https://${dc}.api.mailchimp.com/3.0/lists/${listId}/members`, {
-  //     method: "POST",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //       Authorization: `Basic ${Buffer.from(`anystring:${apiKey}`).toString("base64")}`,
-  //     },
-  //     body: JSON.stringify({ email_address: email, status: "subscribed" }),
-  //   });
-  // }
-  //
-  // Beehiiv example:
-  // ------------------------------------------------------------
-  // const apiKey = process.env.BEEHIIV_API_KEY;
-  // const pubId = process.env.BEEHIIV_PUBLICATION_ID;
-  // if (apiKey && pubId) {
-  //   await fetch(`https://api.beehiiv.com/v2/publications/${pubId}/subscriptions`, {
-  //     method: "POST",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //       Authorization: `Bearer ${apiKey}`,
-  //     },
-  //     body: JSON.stringify({ email, reactivate_existing: true }),
-  //   });
-  // }
+  // The lead object above is POSTed as JSON; map name/first_name/last_name/
+  // email/phone/source to your GHL contact fields inside the workflow.
   // ============================================================
+  const webhookUrl = process.env.GOHIGHLEVEL_WEBHOOK_URL;
+  if (webhookUrl) {
+    try {
+      const res = await fetch(webhookUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(lead),
+        // Don't let a slow webhook hang the visitor's download.
+        signal: AbortSignal.timeout(8000),
+      });
+      if (!res.ok) {
+        console.error(`[subscribe] webhook responded ${res.status}`);
+      }
+    } catch (err) {
+      // Lead is still in the logs above; never block the ebook on a
+      // webhook hiccup.
+      console.error("[subscribe] webhook error:", err?.message || err);
+    }
+  } else {
+    console.warn(
+      "[subscribe] GOHIGHLEVEL_WEBHOOK_URL is not set — lead logged only."
+    );
+  }
 
   return NextResponse.json({ ok: true });
 }

@@ -5,9 +5,9 @@ import { useId, useRef, useState } from "react";
 const PDF_PATH = "/the-purpose-driven-wealth-plan.pdf";
 const PDF_FILENAME = "The-Purpose-Driven-Wealth-Plan.pdf";
 
-// Pragmatic email check — good enough to catch typos without rejecting
-// valid-but-unusual addresses.
+// Pragmatic checks — catch typos without rejecting valid-but-unusual input.
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const digitsOf = (s) => (s.match(/\d/g) || []).length;
 
 function triggerDownload() {
   const a = document.createElement("a");
@@ -19,25 +19,50 @@ function triggerDownload() {
 }
 
 /**
- * Email capture + ebook download.
+ * Lead capture (name + email + phone) -> download the ebook.
  *
  * variant: "light" (default) or "dark" — only changes styling.
- * id: unique id so multiple instances (hero + final CTA) don't collide.
+ * id: unique id so multiple instances (hero + final CTA) don't collide,
+ *     and so the API/webhook can see which form converted.
  */
 export default function EmailCapture({ variant = "light", id = "capture" }) {
-  const [email, setEmail] = useState("");
+  const [form, setForm] = useState({ name: "", email: "", phone: "" });
   const [status, setStatus] = useState("idle"); // idle | submitting | success
   const [error, setError] = useState("");
-  const inputId = useId();
+  const [errorField, setErrorField] = useState(""); // name | email | phone
+  const baseId = useId();
+  const fieldId = (n) => `${baseId}-${n}`;
   const startedDownload = useRef(false);
+
+  const update = (key) => (e) =>
+    setForm((f) => ({ ...f, [key]: e.target.value }));
+
+  const validate = () => {
+    const name = form.name.trim();
+    const email = form.email.trim();
+    const phone = form.phone.trim();
+
+    if (name.length < 2) {
+      return { field: "name", message: "Please enter your name." };
+    }
+    if (!EMAIL_RE.test(email)) {
+      return { field: "email", message: "Please enter a valid email address." };
+    }
+    if (digitsOf(phone) < 7) {
+      return { field: "phone", message: "Please enter a valid phone number." };
+    }
+    return null;
+  };
 
   const onSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    setErrorField("");
 
-    const value = email.trim();
-    if (!EMAIL_RE.test(value)) {
-      setError("Please enter a valid email address.");
+    const problem = validate();
+    if (problem) {
+      setError(problem.message);
+      setErrorField(problem.field);
       return;
     }
 
@@ -46,7 +71,12 @@ export default function EmailCapture({ variant = "light", id = "capture" }) {
       const res = await fetch("/api/subscribe", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: value, source: id }),
+        body: JSON.stringify({
+          name: form.name.trim(),
+          email: form.email.trim(),
+          phone: form.phone.trim(),
+          source: id,
+        }),
       });
 
       if (!res.ok) {
@@ -55,7 +85,6 @@ export default function EmailCapture({ variant = "light", id = "capture" }) {
       }
 
       setStatus("success");
-      // Fire the download automatically, once.
       if (!startedDownload.current) {
         startedDownload.current = true;
         triggerDownload();
@@ -98,33 +127,79 @@ export default function EmailCapture({ variant = "light", id = "capture" }) {
   }
 
   const submitting = status === "submitting";
+  const errId = `${baseId}-err`;
 
   return (
     <form className={wrapperClass} onSubmit={onSubmit} noValidate>
-      <label htmlFor={inputId} className="sr-only" style={srOnly}>
-        Email address
-      </label>
-      <div className="capture__row">
-        <input
-          id={inputId}
-          className="capture__input"
-          type="email"
-          name="email"
-          inputMode="email"
-          autoComplete="email"
-          placeholder="you@email.com"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          aria-invalid={error ? "true" : undefined}
-          aria-describedby={error ? `${inputId}-err` : undefined}
-          disabled={submitting}
-          required
-        />
-        <button className="btn" type="submit" disabled={submitting}>
-          {submitting ? "Sending…" : "Send Me the Ebook"}
-        </button>
+      <div className="capture__fields">
+        <div className="capture__field">
+          <label htmlFor={fieldId("name")} style={srOnly}>
+            Full name
+          </label>
+          <input
+            id={fieldId("name")}
+            className="capture__input"
+            type="text"
+            name="name"
+            autoComplete="name"
+            placeholder="Full name"
+            value={form.name}
+            onChange={update("name")}
+            aria-invalid={errorField === "name" ? "true" : undefined}
+            aria-describedby={error ? errId : undefined}
+            disabled={submitting}
+            required
+          />
+        </div>
+
+        <div className="capture__field">
+          <label htmlFor={fieldId("email")} style={srOnly}>
+            Email address
+          </label>
+          <input
+            id={fieldId("email")}
+            className="capture__input"
+            type="email"
+            name="email"
+            inputMode="email"
+            autoComplete="email"
+            placeholder="Email address"
+            value={form.email}
+            onChange={update("email")}
+            aria-invalid={errorField === "email" ? "true" : undefined}
+            aria-describedby={error ? errId : undefined}
+            disabled={submitting}
+            required
+          />
+        </div>
+
+        <div className="capture__field">
+          <label htmlFor={fieldId("phone")} style={srOnly}>
+            Phone number
+          </label>
+          <input
+            id={fieldId("phone")}
+            className="capture__input"
+            type="tel"
+            name="phone"
+            inputMode="tel"
+            autoComplete="tel"
+            placeholder="Phone number"
+            value={form.phone}
+            onChange={update("phone")}
+            aria-invalid={errorField === "phone" ? "true" : undefined}
+            aria-describedby={error ? errId : undefined}
+            disabled={submitting}
+            required
+          />
+        </div>
       </div>
-      <p className="capture__error" id={`${inputId}-err`} aria-live="polite">
+
+      <button className="btn btn--block" type="submit" disabled={submitting}>
+        {submitting ? "Sending…" : "Send Me the Ebook"}
+      </button>
+
+      <p className="capture__error" id={errId} aria-live="polite">
         {error}
       </p>
       <p className="capture__note">
