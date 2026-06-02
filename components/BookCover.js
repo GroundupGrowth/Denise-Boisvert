@@ -5,7 +5,7 @@ import { useState } from "react";
 /**
  * 3D book mockup built around the real cover artwork.
  *
- * Drop the real cover at /public/book-cover.jpg and it appears automatically —
+ * Drop the real cover at /public/book-cover.jpg and it appears automatically , 
  * no code change needed. Until that file exists (or if it fails to load), a
  * faithful inline-SVG recreation of the cover is shown so the hero is never
  * broken. CSS (.book in globals.css) adds page thickness, spine shading,
@@ -25,7 +25,7 @@ export default function BookCover() {
             src="/book-cover.jpg"
             width={1024}
             height={1536}
-            alt="The Purpose Driven Wealth Plan — How to Eliminate Debt and Build Wealth at the Same Time, by Denise Boisvert and Steve Gibbs, Esq. AEP"
+            alt="The Purpose Driven Wealth Plan: How to Eliminate Debt and Build Wealth at the Same Time, by Denise Boisvert and Steve Gibbs, Esq. AEP"
             loading="eager"
             onError={() => setUseFallback(true)}
           />

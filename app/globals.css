@@ -1,10 +1,10 @@
 /* ============================================================
-   The Purpose Driven Wealth Plan — landing page styles
+   The Purpose Driven Wealth Plan, landing page styles
    Hand-written CSS, CSS variables, no framework.
    ============================================================ */
 
 :root {
-  /* Palette — emerald + gold, matching the book cover.
+  /* Palette, emerald + gold, matching the book cover.
      The --oxblood / --brass variable NAMES are kept for stability;
      only their values changed (oxblood -> emerald, brass -> gold). */
   --oxblood: #15564a; /* mid emerald (primary brand) */
@@ -543,7 +543,7 @@ form.capture {
 }
 
 /* ============================================================
-   3D book cover — real cover image in a tilted frame
+   3D book cover, real cover image in a tilted frame
    The artwork lives at /public/book-cover.jpg. Page-thickness,
    spine shading, sheen and shadow are added with CSS so the flat
    image reads as a physical book.
@@ -965,7 +965,7 @@ form.capture {
 }
 
 /* ============================================================
-   Entrance animation — single orchestrated staggered fade-up
+   Entrance animation, single orchestrated staggered fade-up
    ============================================================ */
 .reveal {
   opacity: 0;

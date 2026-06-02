@@ -1,13 +1,13 @@
-# The Purpose Driven Wealth Plan™ — Lead-Magnet Landing Page
+# The Purpose Driven Wealth Plan™: Lead-Magnet Landing Page
 
 A single-page lead-generation site that gives away the free ebook
-**"The Purpose Driven Wealth Plan™ — How to Eliminate Debt and Build Wealth at
+**"The Purpose Driven Wealth Plan™, How to Eliminate Debt and Build Wealth at
 the Same Time"** by Denise Boisvert & Steve Gibbs, Esq. AEP, in exchange for an
 email address.
 
 Built with **Next.js 14 (App Router)** and hand-written CSS (CSS variables, no
 Tailwind, no UI kit). Fonts (Fraunces + Hanken Grotesk) load via a Google Fonts
-stylesheet `<link>` — no build-time font fetching. Emerald-and-gold palette
+stylesheet `<link>`, no build-time font fetching. Emerald-and-gold palette
 matched to the book cover. The hero presents the real cover artwork in a
 CSS-built 3D frame (page thickness, spine shading, sheen, gentle float), with a
 faithful inline-SVG fallback so the hero is never broken before the image is
@@ -27,19 +27,19 @@ app/
   layout.js              Root layout + Google Fonts <link> in <head>
   page.js                The full landing page (statically rendered)
   globals.css            All styles: tokens, 3D book, animations, responsive
-  api/subscribe/route.js Dynamic API route — validates + logs email
+  api/subscribe/route.js Dynamic API route, validates + logs email
 components/
   EmailCapture.js        Lead form (name/email/phone): validate → POST → download
   BookCover.js           3D frame around /book-cover.jpg (+ SVG fallback)
 public/
-  the-purpose-driven-wealth-plan.pdf   Placeholder PDF — REPLACE with the ebook
-  book-cover.jpg                        Hero cover artwork — ADD this file
+  the-purpose-driven-wealth-plan.pdf   Placeholder PDF, REPLACE with the ebook
+  book-cover.jpg                        Hero cover artwork, ADD this file
 ```
 
 ## Add the cover artwork
 
 The hero renders `public/book-cover.jpg` (portrait, ideally ~1024×1536). Drop
-the cover image at exactly that path and it appears automatically — no code
+the cover image at exactly that path and it appears automatically, no code
 change required. Until the file exists, an inline-SVG recreation of the cover
 is shown as a fallback.
 
@@ -83,8 +83,8 @@ form's auto-download both point to it).
 ## Lead form & GoHighLevel webhook
 
 The form collects **name, email, and phone**. On submit the API route
-(`app/api/subscribe/route.js`) validates the input, logs the lead, and — if a
-webhook URL is configured — POSTs the lead as JSON to your **GoHighLevel
+(`app/api/subscribe/route.js`) validates the input, logs the lead, and, if a
+webhook URL is configured, POSTs the lead as JSON to your **GoHighLevel
 inbound webhook**. The ebook download fires regardless, so a slow or
 mis-configured webhook never blocks the visitor.
 
@@ -134,7 +134,7 @@ Until `GOHIGHLEVEL_WEBHOOK_URL` is set, leads are validated and **logged only**
 
 ## Deploy to Vercel (zero config)
 
-This is a standard Next.js app — Vercel detects and builds it with no extra
+This is a standard Next.js app, Vercel detects and builds it with no extra
 configuration.
 
 First time:

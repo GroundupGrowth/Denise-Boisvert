@@ -46,7 +46,7 @@ export async function POST(request) {
     last_name: lastName,
     email,
     phone,
-    source, // "hero" or "final" — which form converted
+    source, // "hero" or "final", which form converted
     submittedAt: new Date().toISOString(),
   };
 
@@ -54,7 +54,7 @@ export async function POST(request) {
   console.log(`[subscribe] ${name} <${email}> ${phone} (source: ${source})`);
 
   // ============================================================
-  // INTEGRATION POINT — GoHighLevel inbound webhook.
+  // INTEGRATION POINT, GoHighLevel inbound webhook.
   //
   // Set the webhook URL as a Vercel environment variable. NEVER hardcode
   // it in source. In GoHighLevel: Automation -> Workflows -> add an
@@ -88,7 +88,7 @@ export async function POST(request) {
     }
   } else {
     console.warn(
-      "[subscribe] GOHIGHLEVEL_WEBHOOK_URL is not set — lead logged only."
+      "[subscribe] GOHIGHLEVEL_WEBHOOK_URL is not set, lead logged only."
     );
   }
 

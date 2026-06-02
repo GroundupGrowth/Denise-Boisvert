@@ -5,7 +5,7 @@ import { useId, useRef, useState } from "react";
 const PDF_PATH = "/the-purpose-driven-wealth-plan.pdf";
 const PDF_FILENAME = "The-Purpose-Driven-Wealth-Plan.pdf";
 
-// Pragmatic checks — catch typos without rejecting valid-but-unusual input.
+// Pragmatic checks, catch typos without rejecting valid-but-unusual input.
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const digitsOf = (s) => (s.match(/\d/g) || []).length;
 
@@ -21,7 +21,7 @@ function triggerDownload() {
 /**
  * Lead capture (name + email + phone) -> download the ebook.
  *
- * variant: "light" (default) or "dark" — only changes styling.
+ * variant: "light" (default) or "dark", only changes styling.
  * id: unique id so multiple instances (hero + final CTA) don't collide,
  *     and so the API/webhook can see which form converted.
  */

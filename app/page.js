@@ -9,7 +9,7 @@ const CHAPTERS = [
   {
     num: "Chapter One",
     title: "The False Choice",
-    body: "You were told to pay off debt first, then start building wealth. That order is why responsible people stay behind. The choice was never real — and this chapter shows you why.",
+    body: "You were told to pay off debt first, then start building wealth. That order is why responsible people stay behind. The choice was never real, and this chapter shows you why.",
   },
   {
     num: "Chapter Two",
@@ -19,7 +19,7 @@ const CHAPTERS = [
   {
     num: "Chapter Three",
     title: "Redirect, Repay, Reuse",
-    body: "The mechanics: take money you already spend, route it through a policy you own, retire the debt — then put those same dollars back to work. One stream of money doing two jobs.",
+    body: "The mechanics: take money you already spend, route it through a policy you own, retire the debt, then put those same dollars back to work. One stream of money doing two jobs.",
   },
   {
     num: "Chapter Four",
@@ -36,7 +36,7 @@ const TESTIMONIALS = [
   },
   {
     quote:
-      "I wasn't sure what to expect with this book, but wow — it really made me rethink everything I knew about money. The whole idea of using whole life insurance as a banking system? Mind blown. I loved the part about paying off credit card debt with that 'Redirect, Repay, Reuse' strategy — actually feels doable.",
+      "I wasn't sure what to expect with this book, but wow, it really made me rethink everything I knew about money. The whole idea of using whole life insurance as a banking system? Mind blown. I loved the part about paying off credit card debt with that 'Redirect, Repay, Reuse' strategy, actually feels doable.",
     name: "Sunghwan N.",
   },
   {
@@ -98,7 +98,7 @@ export default function Page() {
             <p className="hero__sub reveal" style={{ "--delay": "0.3s" }}>
               You&rsquo;ve done the responsible things and still feel behind.
               This free ebook shows how to redirect money you already spend into
-              a policy you own — so the debt comes down and your wealth goes up
+              a policy you own, so the debt comes down and your wealth goes up
               from the very same dollars.
             </p>
 
@@ -108,7 +108,7 @@ export default function Page() {
                 <span className="stars" aria-hidden="true">
                   ★★★★★
                 </span>
-                <span>Loved by readers — see what they said</span>
+                <span>Loved by readers, see what they said</span>
               </a>
             </div>
 
@@ -118,7 +118,7 @@ export default function Page() {
           </div>
         </section>
 
-        {/* 3. Inside the ebook — dark band */}
+        {/* 3. Inside the ebook, dark band */}
         <section className="section dark">
           <div className="container">
             <div className="band__head">
@@ -150,7 +150,7 @@ export default function Page() {
               &ldquo;
             </span>
             <blockquote>
-              When the debt is gone — <em>what will you have?</em>
+              When the debt is gone, <em>what will you have?</em>
             </blockquote>
           </div>
         </section>
@@ -181,7 +181,7 @@ export default function Page() {
           </div>
         </section>
 
-        {/* 6. Authors — dark band */}
+        {/* 6. Authors, dark band */}
         <section className="section dark">
           <div className="container">
             <div className="authors__head">
@@ -203,7 +203,7 @@ export default function Page() {
                   </p>
                   <p className="author__bio">
                     More than 20 years designing properly structured whole life
-                    policies for real people — showing the actual math applied
+                    policies for real people, showing the actual math applied
                     to their actual numbers, not a sales pitch.
                   </p>
                 </div>
