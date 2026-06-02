@@ -4,20 +4,23 @@
    ============================================================ */
 
 :root {
-  /* Palette */
-  --oxblood: #5c2b2b;
-  --oxblood-deep: #421d1d;
+  /* Palette — emerald + gold, matching the book cover.
+     The --oxblood / --brass variable NAMES are kept for stability;
+     only their values changed (oxblood -> emerald, brass -> gold). */
+  --oxblood: #15564a; /* mid emerald (primary brand) */
+  --oxblood-deep: #0b3a31; /* deep emerald (dark bands, footer) */
+  --green-deepest: #072821; /* near-black emerald */
   --ivory: #f7f1e7;
   --ivory-warm: #efe6d6;
-  --ink: #20140f;
-  --ink-soft: #4a3b32;
-  --brass: #b08542;
-  --brass-light: #c9a468;
+  --ink: #16241f; /* near-black with a green cast */
+  --ink-soft: #41544c;
+  --brass: #a8842f; /* gold for accents on light backgrounds */
+  --brass-light: #d9b85f; /* brighter gold for on-dark accents */
   --paper-card: #fffdf8;
 
   /* On-dark text */
-  --on-dark: #f3e7d6;
-  --on-dark-soft: #d8c4a8;
+  --on-dark: #f1ead9;
+  --on-dark-soft: #cdc3a8;
 
   /* Typography */
   --font-serif: "Fraunces", Georgia, "Times New Roman", serif;
@@ -387,7 +390,10 @@ a {
 }
 
 /* ============================================================
-   3D book cover — pure CSS, no image
+   3D book cover — real cover image in a tilted frame
+   The artwork lives at /public/book-cover.jpg. Page-thickness,
+   spine shading, sheen and shadow are added with CSS so the flat
+   image reads as a physical book.
    ============================================================ */
 .book-stage {
   display: flex;
@@ -397,177 +403,72 @@ a {
 
 .book {
   position: relative;
-  width: clamp(220px, 26vw, 300px);
-  aspect-ratio: 5 / 7;
+  width: clamp(228px, 27vw, 312px);
+  aspect-ratio: 1024 / 1536; /* matches the cover artwork */
   transform-style: preserve-3d;
-  transform: rotateY(-26deg) rotateX(6deg);
+  transform: rotateY(-22deg) rotateX(4deg);
   animation: book-float 7s ease-in-out infinite;
-  filter: drop-shadow(0 38px 38px rgba(32, 20, 15, 0.34));
+  border-radius: 3px 9px 9px 3px;
+  /* Stacked shadows: soft drop shadow + a cream "page block" on the
+     right edge to fake the thickness of the pages. */
+  box-shadow: 0 34px 48px -22px rgba(7, 40, 33, 0.55),
+    2px 0 0 rgba(239, 230, 211, 0.9), 4px 0 0 rgba(216, 204, 180, 0.85),
+    6px 0 0 rgba(239, 230, 211, 0.9), 8px 0 0 rgba(216, 204, 180, 0.85),
+    10px 0 1px rgba(184, 170, 142, 0.9);
 }
 
-/* Front face */
-.book__face {
-  position: absolute;
-  inset: 0;
-  border-radius: 4px 9px 9px 4px;
-  background: linear-gradient(150deg, #6a3434 0%, var(--oxblood) 45%, var(--oxblood-deep) 100%);
-  box-shadow: inset 0 0 0 1px rgba(176, 133, 66, 0.22);
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  padding: clamp(1.1rem, 2vw, 1.6rem);
-  transform: translateZ(18px);
-  backface-visibility: hidden;
+.book__img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 3px 9px 9px 3px;
+  /* dark inner edge near the spine for depth */
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.25);
 }
 
-/* thin vertical hinge highlight near the spine */
-.book__face::before {
+/* spine shading down the left edge */
+.book::before {
   content: "";
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 12px;
-  width: 2px;
-  background: linear-gradient(
-    to bottom,
-    transparent,
-    rgba(176, 133, 66, 0.4),
-    transparent
-  );
-}
-
-/* glossy diagonal sheen */
-.book__face::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    115deg,
-    rgba(255, 255, 255, 0.16) 0%,
-    rgba(255, 255, 255, 0) 38%
-  );
-  pointer-events: none;
-}
-
-.book__inner {
-  position: relative;
-  z-index: 2;
-  border: 1px solid rgba(201, 164, 104, 0.55);
-  border-radius: 3px;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  padding: clamp(0.9rem, 2vw, 1.4rem) 0.7rem;
-  color: var(--on-dark);
-}
-
-.book__tm {
-  font-family: var(--font-sans);
-  font-size: 0.5rem;
-  letter-spacing: 0.28em;
-  text-transform: uppercase;
-  color: var(--brass-light);
-  margin-bottom: auto;
-  padding-top: 0.2rem;
-}
-
-.book__title {
-  font-family: var(--font-serif);
-  font-weight: 600;
-  font-size: clamp(1.15rem, 2.6vw, 1.5rem);
-  line-height: 1.04;
-  color: #fbf3e6;
-  margin: 0;
-}
-
-.book__title em {
-  font-style: italic;
-  color: var(--brass-light);
-}
-
-.book__rule {
-  width: 34px;
-  height: 2px;
-  background: var(--brass);
-  margin: 0.7rem auto;
-}
-
-.book__sub {
-  font-family: var(--font-sans);
-  font-size: 0.56rem;
-  letter-spacing: 0.07em;
-  line-height: 1.5;
-  text-transform: uppercase;
-  color: var(--on-dark-soft);
-}
-
-.book__authors {
-  margin-top: auto;
-  font-family: var(--font-serif);
-  font-style: italic;
-  font-size: 0.74rem;
-  color: var(--brass-light);
-}
-
-/* Spine */
-.book__spine {
   position: absolute;
   top: 0;
   bottom: 0;
   left: 0;
-  width: 36px;
-  transform: rotateY(-90deg);
-  transform-origin: left center;
-  background: linear-gradient(90deg, #361616, var(--oxblood-deep));
-  border-radius: 4px 0 0 4px;
-  box-shadow: inset -3px 0 8px rgba(0, 0, 0, 0.5);
+  width: 18px;
+  border-radius: 3px 0 0 3px;
+  background: linear-gradient(
+    90deg,
+    rgba(0, 0, 0, 0.32) 0%,
+    rgba(0, 0, 0, 0.1) 45%,
+    rgba(255, 255, 255, 0.06) 70%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  pointer-events: none;
+  z-index: 2;
 }
 
-.book__spine::after {
+/* glossy diagonal sheen across the artwork */
+.book::after {
   content: "";
   position: absolute;
-  inset: 6px 8px;
-  border-left: 1px solid rgba(176, 133, 66, 0.45);
-  border-right: 1px solid rgba(176, 133, 66, 0.45);
-}
-
-/* Page block (right side + bottom edges) */
-.book__pages {
-  position: absolute;
-  top: 3px;
-  bottom: 3px;
-  right: 0;
-  width: 34px;
-  transform: rotateY(90deg);
-  transform-origin: right center;
-  background: repeating-linear-gradient(
-    to right,
-    #efe6d3 0px,
-    #efe6d3 1px,
-    #d8ccb4 2px,
-    #efe6d3 3px
-  );
-  border-radius: 0 3px 3px 0;
-}
-
-/* Back cover */
-.book__back {
-  position: absolute;
   inset: 0;
-  border-radius: 4px 9px 9px 4px;
-  background: var(--oxblood-deep);
-  transform: translateZ(-18px);
+  border-radius: 3px 9px 9px 3px;
+  background: linear-gradient(
+    118deg,
+    rgba(255, 255, 255, 0.14) 0%,
+    rgba(255, 255, 255, 0) 34%
+  );
+  pointer-events: none;
+  z-index: 3;
 }
 
 @keyframes book-float {
   0%,
   100% {
-    transform: rotateY(-26deg) rotateX(6deg) translateY(0);
+    transform: rotateY(-22deg) rotateX(4deg) translateY(0);
   }
   50% {
-    transform: rotateY(-22deg) rotateX(6deg) translateY(-14px);
+    transform: rotateY(-19deg) rotateX(4deg) translateY(-14px);
   }
 }
 

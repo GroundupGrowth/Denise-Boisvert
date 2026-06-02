@@ -7,8 +7,11 @@ email address.
 
 Built with **Next.js 14 (App Router)** and hand-written CSS (CSS variables, no
 Tailwind, no UI kit). Fonts (Fraunces + Hanken Grotesk) load via a Google Fonts
-stylesheet `<link>` — no build-time font fetching. The hero book cover is a
-pure-CSS 3D mockup (no external image).
+stylesheet `<link>` — no build-time font fetching. Emerald-and-gold palette
+matched to the book cover. The hero presents the real cover artwork in a
+CSS-built 3D frame (page thickness, spine shading, sheen, gentle float), with a
+faithful inline-SVG fallback so the hero is never broken before the image is
+added.
 
 ## One job
 
@@ -27,10 +30,18 @@ app/
   api/subscribe/route.js Dynamic API route — validates + logs email
 components/
   EmailCapture.js        Client component: validate → POST → auto-download
-  BookCover.js           Pure-CSS 3D book cover
+  BookCover.js           3D frame around /book-cover.jpg (+ SVG fallback)
 public/
   the-purpose-driven-wealth-plan.pdf   Placeholder PDF — REPLACE with the ebook
+  book-cover.jpg                        Hero cover artwork — ADD this file
 ```
+
+## Add the cover artwork
+
+The hero renders `public/book-cover.jpg` (portrait, ideally ~1024×1536). Drop
+the cover image at exactly that path and it appears automatically — no code
+change required. Until the file exists, an inline-SVG recreation of the cover
+is shown as a fallback.
 
 ---
 
