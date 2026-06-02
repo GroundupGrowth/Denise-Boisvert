@@ -391,8 +391,13 @@ form.capture {
   margin-bottom: 0.7rem;
 }
 
+.capture__field {
+  display: block;
+}
+
 .capture__input {
-  flex: 1 1 auto;
+  display: block;
+  width: 100%;
   min-width: 0;
   font-family: var(--font-sans);
   font-size: 1rem;
