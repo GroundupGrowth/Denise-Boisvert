@@ -65,7 +65,7 @@ export async function POST(request) {
   // ============================================================
   const webhookUrl =
     process.env.GOHIGHLEVEL_WEBHOOK_URL ||
-    "https://services.leadconnectorhq.com/hooks/g8TD4Xx0YuFrBlcfcrE2/webhook-trigger/939b98b8-d645-440f-85ba-249024b99d8e";
+    "https://services.leadconnectorhq.com/hooks/g8TD4Xx0YuFrBlcfcrE2/webhook-trigger/qQPJ1mGWkgFqDwiJKx3M";
 
   try {
     const res = await fetch(webhookUrl, {
