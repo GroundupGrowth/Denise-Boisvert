@@ -83,10 +83,10 @@ form's auto-download both point to it).
 ## Lead form & GoHighLevel webhook
 
 The form collects **name, email, and phone**. On submit the API route
-(`app/api/subscribe/route.js`) validates the input, logs the lead, and, if a
-webhook URL is configured, POSTs the lead as JSON to your **GoHighLevel
-inbound webhook**. The ebook download fires regardless, so a slow or
-mis-configured webhook never blocks the visitor.
+(`app/api/subscribe/route.js`) validates the input, logs the lead, and POSTs it
+as JSON to the **GoHighLevel inbound webhook**. It works as soon as it's
+deployed — no setup needed. The ebook download fires regardless, so a slow or
+failing webhook never blocks the visitor.
 
 The JSON payload sent to GoHighLevel:
 
@@ -102,33 +102,12 @@ The JSON payload sent to GoHighLevel:
 }
 ```
 
-### Connect the webhook
+In the GoHighLevel workflow, map `name` / `first_name` / `last_name` / `email` /
+`phone` / `source` to your contact fields.
 
-1. In GoHighLevel: **Automation → Workflows → New Workflow → add an "Inbound
-   Webhook" trigger**, and copy the webhook URL.
-2. Set it as an environment variable (the URL is **never** hardcoded in source).
-
-Locally, in a `.env.local` file (git-ignored):
-
-```bash
-# .env.local
-GOHIGHLEVEL_WEBHOOK_URL=https://services.leadconnectorhq.com/hooks/XXXX/webhook-trigger/YYYY
-```
-
-On Vercel:
-
-```bash
-vercel env add GOHIGHLEVEL_WEBHOOK_URL
-```
-
-(or add it under **Project → Settings → Environment Variables** in the Vercel
-dashboard). Redeploy after adding it.
-
-3. In the workflow, map `name` / `first_name` / `last_name` / `email` /
-   `phone` / `source` to your GHL contact fields.
-
-Until `GOHIGHLEVEL_WEBHOOK_URL` is set, leads are validated and **logged only**
-(visible in `vercel logs` / your terminal), and the ebook still downloads.
+**Changing the webhook later:** the URL lives in `app/api/subscribe/route.js`.
+To swap it without editing code, set a `GOHIGHLEVEL_WEBHOOK_URL` environment
+variable in Vercel — if present, it overrides the built-in URL.
 
 ---
 

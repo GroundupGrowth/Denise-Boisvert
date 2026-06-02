@@ -54,42 +54,34 @@ export async function POST(request) {
   console.log(`[subscribe] ${name} <${email}> ${phone} (source: ${source})`);
 
   // ============================================================
-  // INTEGRATION POINT, GoHighLevel inbound webhook.
+  // GoHighLevel inbound webhook.
   //
-  // Set the webhook URL as a Vercel environment variable. NEVER hardcode
-  // it in source. In GoHighLevel: Automation -> Workflows -> add an
-  // "Inbound Webhook" trigger, copy its URL, then:
-  //   vercel env add GOHIGHLEVEL_WEBHOOK_URL
-  // (or add it under Project -> Settings -> Environment Variables).
-  //
-  // Locally, put it in .env.local:
-  //   GOHIGHLEVEL_WEBHOOK_URL=https://services.leadconnectorhq.com/hooks/...
+  // The form forwards every lead to this GoHighLevel webhook. It works out of
+  // the box on deploy. You can override the URL without a code change by
+  // setting a GOHIGHLEVEL_WEBHOOK_URL environment variable in Vercel.
   //
   // The lead object above is POSTed as JSON; map name/first_name/last_name/
   // email/phone/source to your GHL contact fields inside the workflow.
   // ============================================================
-  const webhookUrl = process.env.GOHIGHLEVEL_WEBHOOK_URL;
-  if (webhookUrl) {
-    try {
-      const res = await fetch(webhookUrl, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(lead),
-        // Don't let a slow webhook hang the visitor's download.
-        signal: AbortSignal.timeout(8000),
-      });
-      if (!res.ok) {
-        console.error(`[subscribe] webhook responded ${res.status}`);
-      }
-    } catch (err) {
-      // Lead is still in the logs above; never block the ebook on a
-      // webhook hiccup.
-      console.error("[subscribe] webhook error:", err?.message || err);
+  const webhookUrl =
+    process.env.GOHIGHLEVEL_WEBHOOK_URL ||
+    "https://services.leadconnectorhq.com/hooks/g8TD4Xx0YuFrBlcfcrE2/webhook-trigger/939b98b8-d645-440f-85ba-249024b99d8e";
+
+  try {
+    const res = await fetch(webhookUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(lead),
+      // Don't let a slow webhook hang the visitor's download.
+      signal: AbortSignal.timeout(8000),
+    });
+    if (!res.ok) {
+      console.error(`[subscribe] webhook responded ${res.status}`);
     }
-  } else {
-    console.warn(
-      "[subscribe] GOHIGHLEVEL_WEBHOOK_URL is not set, lead logged only."
-    );
+  } catch (err) {
+    // Lead is still in the logs above; never block the ebook on a
+    // webhook hiccup.
+    console.error("[subscribe] webhook error:", err?.message || err);
   }
 
   return NextResponse.json({ ok: true });
